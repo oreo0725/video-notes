@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Matt Pocock × Poteto 直播重點：一個月 2,500 個 PR</title>
+<style>
+  :root{
+    --bg:#f7f6f3; --card:#ffffff; --ink:#1f2328; --muted:#5f6670; --line:#e4e2dc;
+    --accent:#c2410c; --accent-soft:#fff1e8;
+    --q:#1d4ed8; --q-soft:#eef3ff;
+    --ex:#047857; --ex-soft:#ecfdf5;
+    --warn:#a16207; --warn-soft:#fef9e7;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+  .wrap{display:grid;grid-template-columns:minmax(0,1fr) 460px;gap:32px;max-width:1320px;margin:0 auto;padding:32px 24px 80px}
+  main{min-width:0}
+  aside{position:sticky;top:16px;align-self:start;max-height:calc(100vh - 32px);display:flex;flex-direction:column;gap:12px}
+  .player{background:#000;border-radius:12px;overflow:hidden;aspect-ratio:16/9;box-shadow:0 6px 24px rgba(0,0,0,.15)}
+  .player > div,.player iframe{width:100%;height:100%;display:block}
+  .now{font-size:13px;color:var(--muted);padding:0 4px}
+  .now b{color:var(--ink)}
+  nav.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px;overflow:auto}
+  nav.toc a{display:flex;gap:10px;align-items:baseline;padding:6px 10px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:14px;line-height:1.5}
+  nav.toc a:hover{background:var(--bg)}
+  nav.toc a.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+  nav.toc .t{font-variant-numeric:tabular-nums;color:var(--muted);min-width:44px;font-size:12px}
+  nav.toc a.active .t{color:var(--accent)}
+
+  header.hero{margin-bottom:28px}
+  .kicker{font-size:13px;letter-spacing:.08em;color:var(--accent);font-weight:700;text-transform:uppercase}
+  h1{font-size:28px;line-height:1.35;margin:6px 0 10px}
+  .meta{color:var(--muted);font-size:14px}
+  .meta a{color:inherit}
+  .chain{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:22px 0}
+  .chain h2{font-size:17px;margin:0 0 12px}
+  .flow{display:flex;flex-direction:column;gap:0;margin:0;padding:0;list-style:none}
+  .flow li{position:relative;padding:8px 0 8px 34px}
+  .flow li::before{content:attr(data-n);position:absolute;left:0;top:9px;width:22px;height:22px;border-radius:50%;
+    background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center}
+  .flow li:not(:last-child)::after{content:"";position:absolute;left:10.5px;top:33px;bottom:-9px;width:1px;background:var(--line)}
+  .note{font-size:13.5px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:12px}
+
+  section.part{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:18px 0;scroll-margin-top:16px}
+  section.part.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+  .ph{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .ph .no{font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:999px}
+  .ph h2{font-size:20px;margin:0;line-height:1.4;flex:1 1 300px}
+  .q{background:var(--q-soft);border-left:4px solid var(--q);border-radius:8px;padding:10px 14px;margin:14px 0}
+  .q .lbl{color:var(--q)}
+  .lbl{font-weight:700;font-size:13px;margin-right:6px}
+  h3{font-size:15.5px;margin:18px 0 6px;color:var(--ink)}
+  ul{margin:4px 0;padding-left:20px}
+  li{margin:4px 0}
+  .ex{background:var(--ex-soft);border-radius:8px;padding:8px 12px;margin:8px 0}
+  .ex .lbl{color:var(--ex)}
+  .quote{border-left:3px solid var(--accent);padding:2px 0 2px 12px;margin:10px 0;font-weight:600}
+  .warn{background:var(--warn-soft);border-radius:8px;padding:8px 12px;margin:8px 0}
+  .warn .lbl{color:var(--warn)}
+  a.ts{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-variant-numeric:tabular-nums;font-weight:600;
+    color:var(--accent);background:var(--accent-soft);border:1px solid #fbd5bd;border-radius:999px;padding:0 8px;margin:0 2px;
+    text-decoration:none;line-height:20px;vertical-align:1px;white-space:nowrap;cursor:pointer}
+  a.ts::before{content:"▶";font-size:9px}
+  a.ts:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+  a.ext{font-size:12px;color:var(--muted);text-decoration:none;margin-left:2px}
+  footer.foot{margin-top:28px;font-size:13.5px;color:var(--muted)}
+  footer.foot li{margin:6px 0}
+  .gaps{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin:18px 0}
+  .gaps h2{font-size:18px;margin:0 0 8px}
+
+  @media (max-width:1100px){
+    .wrap{grid-template-columns:1fr;padding:0 14px 60px}
+    aside{position:sticky;top:0;z-index:10;max-height:none;background:var(--bg);padding:10px 0 8px;margin:0 -14px;padding-left:14px;padding-right:14px}
+    nav.toc{display:none}
+    header.hero{margin-top:18px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<main>
+
+<header class="hero">
+  <div class="kicker">直播重點整理 · YouTube Live</div>
+  <h1>Poteto（pstack 作者）：怎麼在 SpaceX 一個月出貨上千個 PR</h1>
+  <div class="meta">
+    Host：Matt Pocock ／ Guest：Lauren Tan（Poteto，前 Meta React team、Netflix，現於 Cursor／SpaceX AI）<br>
+    2026-10-03 · 1:05:36 · <a href="https://www.youtube.com/watch?v=MN9dGgmLyso" target="_blank" rel="noopener">在 YouTube 開啟</a>
+  </div>
+</header>
+
+<div class="chain">
+  <h2>全場主軸：一條因果鏈</h2>
+  <ol class="flow">
+    <li data-n="1"><b>Verification</b>：給 agent「手和眼睛」，讓它自己驗證自己的工作 <a class="ts" data-t="974"></a></li>
+    <li data-n="2"><b>信任階梯</b>：agent 能自我驗證，人才敢放手，從 micromanage 一路往上爬 <a class="ts" data-t="64"></a></li>
+    <li data-n="3"><b>環境優先</b>：用 lint、type、framework 慣例和 skill 內附的 CLI，讓 agent 預設就做對 <a class="ts" data-t="1570"></a></li>
+    <li data-n="4"><b>接起 inner／outer loop</b>：讓 agent 自己從 Slack、Linear、X 拿到 context <a class="ts" data-t="2124"></a></li>
+    <li data-n="5"><b>總管 agent</b>：coordinator／chief of staff 負責分派與監督，不自己動手 <a class="ts" data-t="2344"></a></li>
+    <li data-n="6"><b>Agent 自己 merge</b>：人改成事後抽樣 review，發現系統性問題就修環境 <a class="ts" data-t="3161"></a></li>
+  </ol>
+  <div class="note">貫穿全場的比喻是<b>米其林廚房</b>：從一個人包辦一切的家庭廚師，到負責經營廚房的主廚，再到開連鎖餐廳。<br>
+  點 <span style="color:var(--accent);font-weight:600">▶ 時間</span> 會讓右側影片跳到那個時間點播放；點旁邊的 ↗ 會在 YouTube 新分頁開啟同一個時間點。</div>
+</div>
+
+<!-- Part 0 -->
+<section class="part" id="p0" data-start="0">
+  <div class="ph"><span class="no">Part 0</span><h2>開場</h2><a class="ts" data-t="0"></a></div>
+  <ul>
+    <li>上一集的來賓是 Uncle Bob，聊軟體品質與 agents <a class="ts" data-t="0"></a></li>
+    <li>Matt 介紹 Poteto：最近在 Twitter 上因為 software factory、提升品質與速度、跟 agents 一起爬「信任階梯」而爆紅 <a class="ts" data-t="21"></a></li>
+    <li>兩人都有很受歡迎的 skill library，被戲稱為「skill 界的奧林帕斯山」。Matt 承認自己沒怎麼用過 Poteto 的 skills，想趁這次把她的經驗挖出來</li>
+    <li>這集的形式是 Poteto 十天前那場演講〈我上個月如何把 2,500 個 PR 送上 production〉（約 300 萬次觀看）的 Q&amp;A <a class="ts" data-t="64"></a></li>
+  </ul>
+</section>
+
+<!-- Part 1 -->
+<section class="part" id="p1" data-start="64">
+  <div class="ph"><span class="no">Part 1</span><h2>你是怎麼爬上信任階梯的？</h2><a class="ts" data-t="64"></a></div>
+  <div class="q"><span class="lbl">提問（Matt）</span>你提到越信任 agents，就越能讓它們做更好的事、擴展到更多 agents。你個人是怎麼爬上這個階梯的？到了 SpaceX 之後又怎麼越爬越高？ <a class="ts" data-t="90"></a></div>
+
+  <h3>第一階段：side project 時期（約 2026 年 1–2 月）<a class="ts" data-t="120"></a></h3>
+  <ul>
+    <li>她離開 Meta React team 後有點 burnout，休了一個月，結果就去開了一個新的 side project（她自嘲 burnout 的人都會這樣） <a class="ts" data-t="120"></a></li>
+    <li>她發現自己花好幾個小時在 <b>micromanage 單一一個 agent</b> <a class="ts" data-t="147"></a></li>
+    <li>當時社群很著迷 orchestration，大家都還在 terminal 裡，人人都在講「我自己做了 custom orchestrator」。她也被這個話題勾住了 <a class="ts" data-t="158"></a></li>
+    <li>她開始寫 skills，但<b>沒辦法衡量一個 skill 到底有沒有效</b>，等於在盲飛，只是迭代得很快 <a class="ts" data-t="204"></a></li>
+    <li>那批 skills 後來成了 pstack 的基礎。原始 repo「poteto noodle」現在還開源，裡面有 skills 和一個 <code>brain</code> 目錄 <a class="ts" data-t="232"></a></li>
+    <li>她當時的核心問題是：<b>怎麼把「自己的能力」抽出來交給 agent</b>，教它寫 code、跑 workflow 都更像她自己</li>
+  </ul>
+
+  <h3>第二階段：加入 Cursor 之後（3 月加入，4 月初開始做這件事）<a class="ts" data-t="256"></a></h3>
+  <ul>
+    <li>她被找去處理 agents window 的效能問題（介面非常卡），一開始全部手動看 flame graph、heap snapshot</li>
+    <li>她又遇到同一個問題：自己是瓶頸，等於是夾在 agent 和 Chrome DevTools 之間傳話的<b>「肉身 proxy（meat proxy）」</b> <a class="ts" data-t="303"></a></li>
+    <li>她原本把個人的 skills 放掉了，後來發現早期學到的教訓都很有用，特別是<b>驗證</b>和<b>工作要嚴謹</b> <a class="ts" data-t="316"></a></li>
+    <li>原因是 frontier models 也很愛走捷徑。所以她的 skills 都圍繞一個目標：<b>讓簡單的做法就是正確的做法</b> <a class="ts" data-t="357"></a></li>
+  </ul>
+</section>
+
+<!-- Part 2 -->
+<section class="part" id="p2" data-start="382">
+  <div class="ph"><span class="no">Part 2</span><h2>（vibe check）領域專業變得沒用了嗎？</h2><a class="ts" data-t="382"></a></div>
+  <div class="q"><span class="lbl">提問（Matt）</span>很多人認為大家越來越依賴 AI，領域專業就沒那麼有用了，你怎麼看？ <a class="ts" data-t="392"></a></div>
+  <div class="quote">Poteto：領域專業比以前更重要。 <a class="ts" data-t="407"></a></div>
+  <ul>
+    <li>模型越來越強（她順帶說自己很愛 Opus 5.5），瓶頸已經不在 agent，而在於<b>你能不能把意圖和目標表達清楚，讓 agent 理解並執行</b></li>
+    <li>現在真正的瓶頸是<b>把意圖和願景傳給 agent</b></li>
+  </ul>
+  <div class="ex"><span class="lbl">例子</span>醫生、律師這類在非工程領域有深厚專業的人，只要稍微懂一點技術、會用 agents，腦中又有清楚的願景，就能做出很棒的產品 <a class="ts" data-t="462"></a></div>
+
+  <h3>Matt 延伸到「語言」<a class="ts" data-t="494"></a></h3>
+  <ul>
+    <li>他著迷於字詞的組合。他最喜歡的時刻，是找到一個 agent 會「咬住」的詞，agent 會在自己的 thinking trace 裡反覆強化它</li>
+  </ul>
+  <div class="ex"><span class="lbl">例子：TDD</span>大家在爭論「agent 該不該用 TDD」，他認為這不重要。重點是這個詞讓 agent 去思考測試、寫測試，並用不同的方式排優先順序。他認為這也是 grilling（拷問式提問）有效的原因 <a class="ts" data-t="525"></a> <a class="ts" data-t="540"></a></div>
+
+  <h3>Poteto 的回應</h3>
+  <ul>
+    <li>grilling 能把關鍵詞從你身上逼出來，或由 agent 提出那些詞，你再說「對，就是這個」 <a class="ts" data-t="540"></a></li>
+    <li>她抄過 Matt 的一個 tip：<b>減少或消除 tautological tests（同義反覆的測試）</b>。agent 寫的大量沒用的測試是她最受不了的事之一 <a class="ts" data-t="568"></a></li>
+    <li>她認為 tautology 這個詞本身就是<b>壓縮過的意圖</b>，一個字就承載了大量意義</li>
+    <li>agents 讓自然語言和程式語言交會在一起，但底層都是語言、都是溝通</li>
+    <li>Matt 補充自己念的是戲劇系，想語言、想莎士比亞想了很久 <a class="ts" data-t="618"></a></li>
+  </ul>
+</section>
+
+<!-- Part 3 -->
+<section class="part" id="p3" data-start="638">
+  <div class="ph"><span class="no">Part 3</span><h2>為什麼用「米其林廚房」而不是「軟體工廠」？</h2><a class="ts" data-t="638"></a></div>
+  <div class="q"><span class="lbl">提問（Matt）</span>software factory 是現在最大的 buzzword，他自己也在做這方向的課。他想談的是從現在跑 1–5 個 agents，到同時跑上百個 agents 是怎麼運作的，並請 Poteto 解釋她的米其林廚房比喻 <a class="ts" data-t="638"></a></div>
+
+  <h3>不喜歡「工廠」這個詞 <a class="ts" data-t="676"></a></h3>
+  <ul>
+    <li>「工廠」不算不準確，但不會讓人聯想到<b>品質與工藝（craft）</b>，而做產品的人很在乎使用者體驗</li>
+    <li>「米其林廚房」比較有抱負感。下廚既實用（填飽肚子），也能變成藝術（讓你想起童年的一餐）</li>
+  </ul>
+
+  <h3>從家庭廚師到主廚 <a class="ts" data-t="759"></a></h3>
+  <div class="ex"><span class="lbl">思想實驗</span>家庭廚師一個人切菜、備料、收拾全包。這時突然把伴侶、兄弟姊妹、整個家族都塞進廚房，大部分人會壓力很大，因為這些人根本不知道器具放在哪。Matt 接話：「我的廚房容量上限是一個人。」 <a class="ts" data-t="803"></a></div>
+  <ul>
+    <li>從一個人下廚到有幾個副主廚（sous chef）幫忙，重點是<b>有意義地切分工作，讓整體大於部分的總和</b>，而不是為了切分而切分</li>
+    <li><b>主廚就是廚房的 tech lead 或 CEO</b>：何時訂食材、怎麼儲存、怎麼備料、什麼時候要備好 <a class="ts" data-t="850"></a></li>
+    <li>工程師也一樣：code 由 agents 寫，但<b>你仍要為結果負責，你的名字和聲譽仍綁在作品上</b></li>
+    <li>你的 skills、環境、codebase，就是<b>做產品的新食材</b> <a class="ts" data-t="898"></a></li>
+  </ul>
+</section>
+
+<!-- Part 4 -->
+<section class="part" id="p4" data-start="910">
+  <div class="ph"><span class="no">Part 4</span><h2>Verification 具體長什麼樣子？</h2><a class="ts" data-t="910"></a></div>
+  <div class="q"><span class="lbl">提問（Matt）</span>很多人覺得 agent 已經很好、自己改善不了，也沒辦法去改 Claude Code 的內部。但其實可以改變 agent 運作的環境，例如改 codebase、給它驗證工具。你的演講非常強調 verification，它具體長什麼樣子？ <a class="ts" data-t="940"></a></div>
+  <div class="quote">「就算你不用 pstack，你工具箱裡最重要的單一 skill 也是 verification。」 <a class="ts" data-t="974"></a></div>
+  <ul>
+    <li><b>定義</b>：給 agent「手和眼睛」，讓它能真的把 code 跑起來，像一般使用者一樣操作，也能 debug、取 trace 和 snapshot <a class="ts" data-t="992"></a></li>
+    <li>這是她加入 Cursor 後建的<b>第一個 skill</b>，也是第一個真正讓她在信任階梯上往上爬的 skill <a class="ts" data-t="1010"></a></li>
+    <li>其他 skills（how、why、unslop）再好，她仍然得當 agent 與產出之間的 proxy。<b>agent 看不到自己工作的結果，就不可能迭代</b> <a class="ts" data-t="1031"></a></li>
+    <li>她認為讓 loop 成為 loop 的最重要部分就是驗證：agent 能驗證自己的工作，人才能從等式中被拿掉 <a class="ts" data-t="1063"></a></li>
+  </ul>
+  <div class="ex"><span class="lbl">例子：agents window 效能</span>她想做到 <b>hill climbing</b>：先定一個 rubric 或評分方式，有了 loop 之後，就能讓 agent 持續嘗試改進。她也提到 Karpathy 的 auto research 有類似想法 <a class="ts" data-t="1089"></a> <a class="ts" data-t="1113"></a></div>
+  <ul>
+    <li>現在 Cursor／SpaceX AI 的<b>每個 app 都有自己的 verification skill，而且是自動維護的</b>，已經成為團隊的關鍵基礎設施 <a class="ts" data-t="1149"></a></li>
+  </ul>
+</section>
+
+<!-- Part 5 -->
+<section class="part" id="p5" data-start="1162">
+  <div class="ph"><span class="no">Part 5</span><h2>skill 裡附的 custom CLI 在做什麼？</h2><a class="ts" data-t="1162"></a></div>
+  <div class="q"><span class="lbl">提問（Matt）</span>你為驗證做了一個 custom CLI，它做什麼、怎麼執行、為什麼要做？ <a class="ts" data-t="1162"></a></div>
+
+  <h3>最初的動機：context window <a class="ts" data-t="1185"></a></h3>
+  <ul>
+    <li>去年底到今年初，大家最關心 context window，社群甚至有個迷因：<b>agent 只要 compact 一次，這個 session 剩下的時間就會變笨</b> <a class="ts" data-t="1202"></a></li>
+    <li>現在 summarization 已經進步很多，比較不是為了 context，但乾淨的 context 仍然有好處</li>
+  </ul>
+
+  <h3>現在的核心目的：確定性和判斷力分工 <a class="ts" data-t="1245"></a></h3>
+  <ul>
+    <li>她用 CLI 把 skill 裡<b>確定性（deterministic）的部分寫成 script，拿掉原本會被不必要用掉的判斷力（judgment）</b></li>
+    <li>她把工作看成一個光譜：<b>判斷型</b>（需要思考、拼湊多份 context）↔ <b>確定型</b>（例如把 code 從一種 pattern 重構成另一種，非常機械） <a class="ts" data-t="1265"></a></li>
+    <li>CLI 本身並不新奇，只是串接 Playwright、Chrome DevTools Protocol、呼叫 API 的膠水 code <a class="ts" data-t="1331"></a></li>
+    <li>Matt 的解讀：這是一種<b>對 skill 隱藏資訊</b>的方式。skill 保持精簡，等於壓縮資訊，讓 agent 的行為更一致 <a class="ts" data-t="1340"></a></li>
+  </ul>
+  <div class="ex"><span class="lbl">沒有 CLI 時的實際問題</span>每個 agent 驗證時都會<b>「重建整個世界」</b>，而且每個做法都不一樣。agent 自己寫 script，結果常常不能用；上一個 agent 明明做出了能用的版本，卻把它丟掉了。這不只浪費 context，也拖慢速度 <a class="ts" data-t="1379"></a> <a class="ts" data-t="1399"></a></div>
+  <ul>
+    <li>給聽眾的建議：<b>你的 skills 和 rules 裡，有多少其實可以是確定性的？</b>讓 agent 只在非確定性的部分發揮 <a class="ts" data-t="1422"></a></li>
+  </ul>
+  <div class="ex"><span class="lbl">延伸例子：migration</span>要遷移到對 agent 更友善的技術時，可以用 codemod 爬 AST、機械地轉換 code，由 script 來做，不必讓 agent 做 <a class="ts" data-t="1454"></a></div>
+</section>
+
+<!-- Part 6 -->
+<section class="part" id="p6" data-start="1480">
+  <div class="ph"><span class="no">Part 6</span><h2>投資環境，跟做 feature、出貨相比有多重要？</h2><a class="ts" data-t="1480"></a></div>
+  <div class="q"><span class="lbl">提問（Matt）</span>如果 agent 總是在某件事上出錯，就讓那件事在環境裡不可能發生。他對好 codebase 的定義是<b>容易修改、改了不會出事</b>，也就是用 guardrails 把 agent 限制在很窄的路徑上。你們甚至自己做了 framework，那這件事跟做 feature 相比有多重要？ <a class="ts" data-t="1522"></a></div>
+  <div class="quote">「工程師的新工作，就是花時間在環境上。」 <a class="ts" data-t="1570"></a></div>
+  <ul>
+    <li><b>惡性循環</b>：不投資環境，就會卡在信任階梯的低處，只能 micromanage，也就沒有餘裕去改善環境</li>
+  </ul>
+  <div class="ex"><span class="lbl">類比：刀沒磨利</span>就像寫 code 的年代從沒學過工具，不知道 VS Code、Vim，只會用 Notepad，連 Git 都沒聽過。刀鈍了做什麼都慢，deadline 一逼近就只能埋頭硬做 <a class="ts" data-t="1633"></a></div>
+  <div class="ex"><span class="lbl">類比：壓蒜器</span>切蒜很慢就買個壓蒜器。工具被發明是有原因的；如果米其林廚房的廚師沒有工具，每個人都會自己亂搞一套 <a class="ts" data-t="1682"></a></div>
+
+  <h3>TypeScript 與限縮空間 <a class="ts" data-t="1724"></a></h3>
+  <ul>
+    <li>她多年前在 TSConf 講過「限縮型別」，最喜歡的是 <b>type narrowing</b>：從什麼都可能的寬型別，縮小到「某個特定的 string 常數」 <a class="ts" data-t="1755"></a></li>
+    <li>她把這連到範疇論：<b>codebase 的 constraints 也是在限縮可能的空間</b> <a class="ts" data-t="1789"></a></li>
+  </ul>
+  <div class="ex"><span class="lbl">例子：內部 framework「Dune」</span><a class="ts" data-t="1801"></a>
+    <ul>
+      <li>沒有開源，她形容它是「Electron apps 用的內部版 Next.js」，配有非常嚴格的 lint rules，<b>一件事只有一種做法</b></li>
+      <li>每個 feature 有自己的目錄，由 registry 爬 codebase 自動發現。效果是<b>很難寫出爛 code</b>，agent 也不會往 god file 裡追加 <a class="ts" data-t="1832"></a></li>
+      <li>起因：那個 bot 最早幾版由<b>大約 8 個 god file 組成，每個至少一萬行</b> <a class="ts" data-t="1877"></a></li>
+    </ul>
+  </div>
+  <ul>
+    <li><b>方法論</b>：觀察 agent 怎麼失敗。每看到一個錯誤就問：<b>「怎麼把它變成 lint rule？怎麼讓 codebase 根本做不出這件事？」</b> <a class="ts" data-t="1900"></a></li>
+    <li>Matt 開玩笑說 TypeScript 自己就有一個出名的 25,000 行檔案 <a class="ts" data-t="1941"></a></li>
+    <li>Matt 的總結：要像老鷹一樣盯著 agent。規則住在環境裡，agent 不會因為要記太多規則而超載，會在對的時機撞上規則、被彈回去 <a class="ts" data-t="1950"></a></li>
+  </ul>
+</section>
+
+<!-- Part 7 -->
+<section class="part" id="p7" data-start="1970">
+  <div class="ph"><span class="no">Part 7</span><h2>2,500 個 PR 從哪來？擴展的機制是什麼？</h2><a class="ts" data-t="1970"></a></div>
+  <div class="q"><span class="lbl">提問（Matt）</span>你總不可能每個月開 2,500 個 chat。是不是有自動 trigger？software factory 怎麼自己產生工作？ <a class="ts" data-t="1976"></a></div>
+  <ul>
+    <li><b>前提仍然是環境</b>：如果沒先花時間經營廚房、刀具和工具，她絕對做不到 <a class="ts" data-t="2010"></a></li>
+  </ul>
+  <div class="ex"><span class="lbl">比喻：連鎖餐廳</span>就像 Gordon Ramsay 把設計菜單的訣竅都教給行政主廚，所以能開第二、第三家店。她把<b>每個專案、每個大 chat 看成一家餐廳</b>，像搭直升機在它們之間巡視 <a class="ts" data-t="2054"></a> <a class="ts" data-t="2081"></a></div>
+
+  <h3>inner loop 與 outer loop <a class="ts" data-t="2124"></a></h3>
+  <ul>
+    <li><b>inner loop</b>：agent 工程師們朝著「她的意圖的 snapshot」寫 code。問題是 <b>snapshot 會過期</b> <a class="ts" data-t="2141"></a></li>
+    <li>新的 bug report 會跑到 Slack、Linear、X 這些沒接進 inner loop 的系統，以前都是她當 proxy 轉交</li>
+    <li><b>outer loop</b>：用那個 bot 這類工具把對外收集資訊的工作也自動化。兩個 loop 接起來，agent 就能自己取得 context</li>
+  </ul>
+  <div class="ex"><span class="lbl">例子：Slack bug triage</span>接 Slack MCP，或在自己的 harness 裡訂閱某個頻道，然後告訴 agent「有 bug report 就去 triage、去重現」。agent 會用 verification skill 確認 <b>bug 在 main 上確實還存在</b>，排除使用者 setup、資料，或沒裝 dependency 這類原因 <a class="ts" data-t="2204"></a> <a class="ts" data-t="2244"></a></div>
+  <ul>
+    <li><b>核心心法</b>：一直問自己「這個流程裡我哪裡是瓶頸？agent 為什麼需要我來回答？」然後讓它<b>靠真實資料，而不是幻覺</b>自己回答 <a class="ts" data-t="2276"></a></li>
+    <li>她認為 company brain、context graph 這些詞不必要地複雜，說穿了就是：<b>你原本要自己轉交給 agent 的資訊，教它自己去拿</b> <a class="ts" data-t="2297"></a></li>
+    <li>她不是坐著開 2,500 個 chat，而是用 Cursor 的新功能 <b>Projects</b>（coordinator agent）。它不自己做事，負責管理任務清單、spawn sub-agents <a class="ts" data-t="2337"></a></li>
+    <li><b>最大的突破</b>：從「怎麼讓 agent merge 自己的 code？」往回推。大家第一個反應是「你怎麼 review？團隊一定恨死你。」Matt 請她先保留這個話題，留到 Part 10 <a class="ts" data-t="2380"></a></li>
+  </ul>
+</section>
+
+<!-- Part 8 -->
+<section class="part" id="p8" data-start="2412">
+  <div class="ph"><span class="no">Part 8</span><h2>具體來說，你的電腦畫面長什麼樣子？</h2><a class="ts" data-t="2412"></a></div>
+  <div class="q"><span class="lbl">提問（Matt）</span>以前手動開 chat，就像親手把點單遞給廚師；現在像是有個 agent 在當出餐控台（expo）。是不是有 bot 訂閱頻道，再加上 coordinator 或 chief of staff agents？ <a class="ts" data-t="2415"></a></div>
+  <ul>
+    <li>她承認目前的工具有點讓人困惑，團隊正在簡化與統一</li>
+    <li><b>那個 bot 就是 outer loop</b>：它有 connectors（很多人稱這類工具為 personal agents），可以連到 email、行事曆、Slack 等服務 <a class="ts" data-t="2465"></a></li>
+    <li><b>「context, not control」</b>：這是她在 Netflix 時 manager 們最常談的原則。與其 micromanage，不如提供 context，讓 agent 能自給自足 <a class="ts" data-t="2497"></a></li>
+  </ul>
+  <div class="ex"><span class="lbl">具體設定</span>幾個 bot 用 routines 持續監看她的 Slack、X、email、Linear。例如：「盯著那個 bot desktop app 的 bug，發現了就送到我的 Cursor project。」 <a class="ts" data-t="2536"></a></div>
+  <ul>
+    <li><b>Cursor Project</b> 是一個在雲端、有自己電腦的 coordinator agent，扮演行政主廚或 chief of staff。它不做事，只負責委派、編排、傳遞 context <a class="ts" data-t="2560"></a></li>
+  </ul>
+  <div class="q"><span class="lbl">追問（Matt）</span>一次湧進 30 個 issue 怎麼辦？ <a class="ts" data-t="2602"></a></div>
+  <ul>
+    <li>coordinator 會自己判斷用哪種 agent topology 分派最有效率 <a class="ts" data-t="2616"></a></li>
+    <li>分工是：<b>Cursor Projects 負責 inner loop，那個 bot 負責 outer loop</b>。bot 可以直接發訊息給 project，她甚至不用打開 Cursor <a class="ts" data-t="2648"></a></li>
+  </ul>
+  <div class="ex"><span class="lbl">例子：一批效能 issue</span>一批 issue 都在講「app 很慢」，彼此相關。如果每個 issue 開一個 agent，會失去它們之間的關聯、重複做工，也看不到更高層的問題。多份略有不同的 report 反而能幫你 zoom out：只看一份時以為 bug 在這裡，看完一整批才發現根因在更上層 <a class="ts" data-t="2660"></a> <a class="ts" data-t="2699"></a></div>
+</section>
+
+<!-- Part 9 -->
+<section class="part" id="p9" data-start="2730">
+  <div class="ph"><span class="no">Part 9</span><h2>還有什麼工作來源？多久觸發一次？</h2><a class="ts" data-t="2730"></a></div>
+  <div class="q"><span class="lbl">提問（Matt）</span>除了 bug report，還有其他工作來源嗎？ <a class="ts" data-t="2734"></a></div>
+  <ul>
+    <li>另一個來源是讀 code。那 2,500 個 PR <b>不是 2,500 個 feature，很多是 gardening（園藝式的整理）</b> <a class="ts" data-t="2761"></a></li>
+  </ul>
+  <div class="ex"><span class="lbl">例子：新人</span>環境夠好的話，不熟團隊工程實踐的新人第一天就能產出好 code，不會先開一堆低品質 PR <a class="ts" data-t="2788"></a></div>
+  <div class="q"><span class="lbl">追問（Matt）</span>觸發機制是什麼？每小時跑一次，還是用 cron job？ <a class="ts" data-t="2815"></a></div>
+  <div class="ex"><span class="lbl">例子：React foot guns</span>她有一個 agent 持續掃描被禁止的 pattern，但<b>不叫它先修，而是叫它 append 到一份文件裡</b>。每隔幾天她去看一次，常發現「這些其實都是同一個問題」 <a class="ts" data-t="2852"></a> <a class="ts" data-t="2870"></a></div>
+  <ul>
+    <li><b>buffer／queue 的價值</b>：處在純執行模式時會錯過大局；先累積成 artifact，人或 agent 才能從中找出 pattern <a class="ts" data-t="2878"></a></li>
+    <li>這也是 chief of staff agent 的價值：除了執行，它還<b>看得到整片森林</b> <a class="ts" data-t="2928"></a></li>
+    <li>Matt 說聽到這裡腦袋有點爆炸，下週要拍的課可能得改內容 <a class="ts" data-t="2942"></a></li>
+  </ul>
+</section>
+
+<!-- Part 10 -->
+<section class="part" id="p10" data-start="2955">
+  <div class="ph"><span class="no">Part 10</span><h2>Review：2,500 道菜你都嚐過嗎？</h2><a class="ts" data-t="2955"></a></div>
+  <div class="q"><span class="lbl">提問（Matt）</span>大家最常回的就是「這些菜從你面前經過時，你每一道都嚐了嗎？」我猜答案是某種形式的「沒有」 <a class="ts" data-t="2958"></a></div>
+  <ul>
+    <li>她不想變成再也不嚐自己的菜，但規模大了不可能每道都嚐，所以<b>改成抽樣（sampling）</b> <a class="ts" data-t="2982"></a></li>
+    <li>這裡工廠比喻反而比較貼切：<b>品質主管不檢查每一件產品，而是抽樣</b>，並嚴格審視 agent 的壞 pattern <a class="ts" data-t="2990"></a></li>
+    <li><b>修的是環境，不是單一 agent</b>：一次性的錯誤可以不管；多個 agent 走同一條捷徑、到處擴散同一個 workaround 時，就去改 skills、lints、type system <a class="ts" data-t="3019"></a> <a class="ts" data-t="3036"></a></li>
+  </ul>
+  <div class="warn"><span class="lbl">她的警語</span>達到這個境界<b>非常難</b>，她不想包裝成用了 pstack 就能輕鬆做到。這需要長時間觀察 agent 在哪裡失敗，有意識地設下 guardrails <a class="ts" data-t="3076"></a></div>
+
+  <h3>這是 dark factory（關燈工廠）嗎？<a class="ts" data-t="3105"></a></h3>
+  <div class="quote">Poteto：「其實某種程度上是。」</div>
+  <ul>
+    <li>agent 自己 merge PR，她去睡覺時 agents 24/7 繼續工作 <a class="ts" data-t="3119"></a></li>
+  </ul>
+  <div class="ex"><span class="lbl">例子：十個以上的 chief of staff</span>一個負責那個 bot desktop app 的效能、一個負責修使用者回報的 bug、一個在探索用另一種語言把它重寫成原生 app（純粹好玩的玩具專案） <a class="ts" data-t="3127"></a> <a class="ts" data-t="3143"></a></div>
+  <ul>
+    <li>她現在是在 <b>PR land 之後才 review</b> <a class="ts" data-t="3161"></a></li>
+    <li><b>pstack 的 full autopilot</b>：每個 PR 都會觸發多個 verifier agent 做 <b>fuzz</b>，也就是真的跑 app、像真人一樣到處點、找 regression，發現問題就自己修，重複到 PR 能 land 為止 <a class="ts" data-t="3163"></a> <a class="ts" data-t="3176"></a></li>
+    <li>這<b>很吃 token</b>，但可以調整，例如把 10 個 verifier 降成 1 個，或只叫 agent 驗證自己的工作 <a class="ts" data-t="3201"></a></li>
+    <li>她早上看 <b>commit history</b> 做 review，發現問題就 revert、修改，或加新的 lint rule <a class="ts" data-t="3232"></a></li>
+    <li><b>心理層面</b>：第一天打開時非常可怕，擔心半夜出 SEV（嚴重事故），需要勇氣。現在她說自己「睡得好多了」 <a class="ts" data-t="3250"></a></li>
+  </ul>
+  <h3>Matt 的區分：這不是 vibe coding <a class="ts" data-t="3289"></a></h3>
+  <ul>
+    <li>他心中的 dark factory 接近 Karpathy 原始定義的 vibe coding：忘了 code 的存在。Poteto 的做法完全不同，<b>code 和環境才是根本</b>，garbage in、garbage out <a class="ts" data-t="3303"></a></li>
+    <li>所以比較像調光開關，有些部分暗、有些部分亮。Poteto 補充：餐廳老闆也會偶爾回店裡嚐嚐菜 <a class="ts" data-t="3312"></a></li>
+    <li>Matt 認為<b>「用抽樣取代阻擋（sampling instead of blocking）」</b>這個概念非常重要 <a class="ts" data-t="3336"></a></li>
+  </ul>
+</section>
+
+<!-- Part 11 -->
+<section class="part" id="p11" data-start="3340">
+  <div class="ph"><span class="no">Part 11</span><h2>重視資安的領域、不可逆的變更怎麼辦？</h2><a class="ts" data-t="3340"></a></div>
+  <div class="q"><span class="lbl">提問（Matt）</span>醫療、法律、金融這些領域，有的 PR 是<b>雙向門（two-way door）</b>，merge 後可以 revert；有的是<b>單向門（one-way door）</b>，可能造成資料遺失。如果大部分 PR 都是單向門，你還會推薦這套做法嗎？ <a class="ts" data-t="3342"></a> <a class="ts" data-t="3366"></a></div>
+  <ul>
+    <li>一切都回到<b>你能從 agent 取得多好的驗證品質</b>。可驗證的領域比較容易，某種意義上單向門會變成雙向門</li>
+    <li>很難用程式驗證的領域就很難做到，所以<b>領域的可驗證性（verifiability）</b>是關鍵 <a class="ts" data-t="3420"></a></li>
+    <li>軟體工程在很多情況下相當可驗證；數學在寫證明時也有部分可以驗證 <a class="ts" data-t="3435"></a></li>
+  </ul>
+  <div class="warn"><span class="lbl">她坦白</span>她沒有答案，這需要整個產業和工程師一起摸索</div>
+  <ul>
+    <li><b>她的預測</b>：會出現越來越多為 agent 設計的程式語言（agent-oriented programming languages） <a class="ts" data-t="3463"></a></li>
+  </ul>
+  <div class="ex"><span class="lbl">例子：Bend</span>它把程式與形式證明結合在一起。以前證明得用 Lean、TLA+ 這類獨立語言寫，再用 solver 確認所有情況都涵蓋、沒有 race condition。她的邏輯是：<b>如果能編譯、證明也顯示它正確，為什麼不 merge？</b> <a class="ts" data-t="3472"></a> <a class="ts" data-t="3511"></a> <a class="ts" data-t="3547"></a></div>
+</section>
+
+<!-- Part 12 -->
+<section class="part" id="p12" data-start="3564">
+  <div class="ph"><span class="no">Part 12</span><h2>pstack 跟 Matt 的 skills 要怎麼搭配使用？</h2><a class="ts" data-t="3564"></a></div>
+  <div class="q"><span class="lbl">提問（Matt）</span>大家常把它想成「你的 skills vs. 我的 skills」。他把 skills 看成「被寫成文字的流程」，那要怎麼把兩邊的東西變成自己的流程？他也提到 Poteto 當天分享的 tip：<b>翻自己過去的 transcripts，找出你不斷糾正 agent 的地方，做成 skill</b> <a class="ts" data-t="3583"></a> <a class="ts" data-t="3636"></a></div>
+  <ul>
+    <li>兩套 skills <b>非常互補</b>。skill 說到底就是流程、就是 markdown，可以自由交織使用 <a class="ts" data-t="3659"></a></li>
+    <li><b>每個人都要有自己的一套刀</b>：廚師換餐廳時都會帶著自己的刀。<b>信任，說到底是對自己工具的信任</b> <a class="ts" data-t="3681"></a></li>
+  </ul>
+  <div class="ex"><span class="lbl">組合例子</span>把 Matt 的 grill-me 和 docs、wayfinder，跟 pstack 的執行類 skills 一起用 <a class="ts" data-t="3716"></a></div>
+  <ul>
+    <li>更推薦的做法是叫 agent 翻你過去的對話，找出你不得不介入的時刻，建議做成 lint rule 或新 skill。她說<b>過去的 chats 是 context 的寶庫，是實體化的流程</b> <a class="ts" data-t="3756"></a></li>
+  </ul>
+  <div class="ex"><span class="lbl">例子：pstack 的 recall skill</span>她在處理 Cursor 應用程式的 virtualization，bug 很多，每開一個新 chat 都想把上一個 chat 的 context 帶過來。recall 就是把這個 workflow 壓縮成 skill，省得每次都寫一長篇說明 <a class="ts" data-t="3779"></a> <a class="ts" data-t="3787"></a></div>
+  <ul>
+    <li><b>skills 的演變</b>：去年的 skills 比較像實作細節，例如「該用哪個確切的 script 指令」。用新模型可以把這些刪掉，專注在 workflow <a class="ts" data-t="3830"></a></li>
+    <li>她預測 <b>skills 會越來越小、越來越精簡</b> <a class="ts" data-t="3851"></a></li>
+    <li>也可以直接讀兩人的 skills 自己組合，例如把 wayfinder 和 potato mode 合成自己的 custom mode。skills 可塑性極高，因為它就只是語言 <a class="ts" data-t="3866"></a></li>
+  </ul>
+  <div class="quote">Matt：skills 裡沒有魔法。如果真有，是選用的字詞，以及把抽象流程轉成語言時所做的思考。思考一旦做完，成果就擺在那裡，別人直接拿去用就好。 <a class="ts" data-t="3878"></a></div>
+  <ul><li>兩人約好可能週一再錄 Part 2 <a class="ts" data-t="3919"></a></li></ul>
+</section>
+
+<div class="gaps">
+  <h2>補充：值得留意的落差</h2>
+  <ul>
+    <li><b>她自己也提了警語</b>：達到「agent 自己 merge」需要長時間經營環境。2,500 個 PR 的前提是 Cursor 內部已有自動維護的 verification skill、Dune framework 等大量基礎設施 <a class="ts" data-t="3076"></a></li>
+    <li><b>單向門的問題沒有解答</b>：這正好是有硬體裝置、使用者資料的產品（例如 YiBi）會碰到的邊界。要套用到團隊，應該先把「哪些變更可以驗證、可以回滾」分類清楚 <a class="ts" data-t="3420"></a></li>
+    <li><b>PR 數量的性質</b>：有大量是 gardening（清掉被禁止的 pattern、拆 god file），不能直接換算成 feature 產能 <a class="ts" data-t="2761"></a></li>
+  </ul>
+</div>
+
+<footer class="foot">
+  <ul>
+    <li>時間戳是從 YouTube 自動字幕的原始時間定位的，可能有幾秒誤差。原始字幕沒有標說話者，提問者和回答者是依對話內容判斷的。</li>
+    <li>字幕裡 Grockbot、grabbot、graphbot 這幾種拼法，推斷都指同一個 Cursor／SpaceX AI 的 personal-agent 產品，正式名稱未確認，內文寫成「那個 bot」。</li>
+    <li>如果內嵌播放器無法載入（例如直接用 file:// 開啟時，YouTube 可能拒絕內嵌），點時間戳會改成在新分頁開啟 YouTube 的同一個時間點。</li>
+  </ul>
+</footer>
+</main>
+
+<aside>
+  <div class="player"><div id="yt"></div></div>
+  <div class="now">目前播放：<b id="nowPart">—</b></div>
+  <nav class="toc" id="toc"></nav>
+</aside>
+</div>
+
+<script>
+(function(){
+  var VID = "MN9dGgmLyso";
+  var player = null, ready = false, failed = false;
+
+  function fmt(s){ s=+s; var h=Math.floor(s/3600), m=Math.floor(s%3600/60), x=s%60;
+    var mm = h ? String(m).padStart(2,"0") : String(m);
+    return (h? h+":" : "") + mm + ":" + String(x).padStart(2,"0"); }
+  function ytUrl(s){ return "https://www.youtube.com/watch?v="+VID+"&t="+s+"s"; }
+
+  // decorate timestamp chips
+  document.querySelectorAll("a.ts").forEach(function(a){
+    var t = a.getAttribute("data-t");
+    a.textContent = fmt(t);
+    a.href = ytUrl(t);
+    a.title = "跳到 " + fmt(t) + " 播放";
+    var ext = document.createElement("a");
+    ext.className = "ext"; ext.href = ytUrl(t); ext.target = "_blank"; ext.rel = "noopener";
+    ext.textContent = "↗"; ext.title = "在 YouTube 新分頁開啟";
+    a.after(ext);
+    a.addEventListener("click", function(e){
+      e.preventDefault();
+      if (ready && !failed) { player.seekTo(+t, true); player.playVideo(); }
+      else { window.open(ytUrl(t), "_blank", "noopener"); }
+    });
+  });
+
+  // build TOC from parts
+  var parts = Array.prototype.slice.call(document.querySelectorAll("section.part"));
+  var toc = document.getElementById("toc");
+  parts.forEach(function(sec){
+    var a = document.createElement("a");
+    a.href = "#" + sec.id;
+    a.innerHTML = '<span class="t">'+fmt(sec.dataset.start)+'</span><span>'+
+      sec.querySelector(".no").textContent+"｜"+sec.querySelector("h2").textContent+"</span>";
+    a.addEventListener("click", function(e){
+      e.preventDefault();
+      sec.scrollIntoView({behavior:"smooth", block:"start"});
+      if (ready && !failed) { player.seekTo(+sec.dataset.start, true); player.playVideo(); }
+    });
+    sec._toc = a;
+    toc.appendChild(a);
+  });
+
+  // highlight current part while playing
+  var lastActive = null;
+  function markActive(sec){
+    if (sec === lastActive) return;
+    if (lastActive){ lastActive.classList.remove("active"); lastActive._toc.classList.remove("active"); }
+    if (sec){ sec.classList.add("active"); sec._toc.classList.add("active");
+      sec._toc.scrollIntoView({block:"nearest"});
+      document.getElementById("nowPart").textContent = sec.querySelector(".no").textContent+"｜"+sec.querySelector("h2").textContent; }
+    lastActive = sec;
+  }
+  setInterval(function(){
+    if (!ready || failed || !player.getCurrentTime) return;
+    var t = player.getCurrentTime(), cur = null;
+    parts.forEach(function(sec){ if (t >= +sec.dataset.start) cur = sec; });
+    markActive(cur);
+  }, 1000);
+
+  // YouTube IFrame API
+  window.onYouTubeIframeAPIReady = function(){
+    var vars = { rel:0, modestbranding:1, playsinline:1 };
+    if (location.protocol.indexOf("http") === 0) vars.origin = location.origin;
+    player = new YT.Player("yt", {
+      videoId: VID, playerVars: vars,
+      events: {
+        onReady: function(){ ready = true; },
+        onError: function(){ failed = true;
+          document.getElementById("nowPart").textContent = "內嵌播放器無法載入，點時間戳會改在 YouTube 新分頁開啟"; }
+      }
+    });
+  };
+  var s = document.createElement("script");
+  s.src = "https://www.youtube.com/iframe_api";
+  s.onerror = function(){ failed = true; };
+  document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>
