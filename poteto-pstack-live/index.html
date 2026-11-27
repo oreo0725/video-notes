@@ -80,6 +80,50 @@
     .now{display:none}
     h1{font-size:22px}
   }
+
+  /* ===== RWD ===== */
+  button.toggle{display:none}
+
+  /* wide: video fixed on the left half (TOC under it), content scrolls on the right half */
+  @media (min-width:1024px){
+    body{display:grid;grid-template-columns:50vw minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);background:#121212}
+    .stage{grid-column:1;grid-row:1;height:auto;aspect-ratio:16/9}
+    .bar{grid-column:1;grid-row:2;flex-direction:column;align-items:stretch;gap:10px;padding:14px 16px;
+      background:#121212;border:0;box-shadow:none;overflow:hidden}
+    .bar .now{max-width:none;color:#b8b8b8}
+    .bar .now b{color:#fff}
+    .bar nav.toc{flex-wrap:wrap;overflow-y:auto;align-content:flex-start}
+    .bar nav.toc a{background:#1f1f1f;border-color:#333;color:#e6e6e6}
+    .bar nav.toc a .t{color:#9a9a9a}
+    .bar nav.toc a.active{background:var(--accent);border-color:var(--accent);color:#fff}
+    .bar nav.toc a.active .t{color:#ffe3d3}
+    main.scroller{grid-column:2;grid-row:1 / 3;background:var(--bg)}
+    .content{max-width:860px;padding:28px 32px 80px}
+  }
+
+  /* narrow: video fills the whole page, content floats semi-transparent on the right */
+  @media (max-width:1023.98px){
+    body{display:block}
+    .stage{position:fixed;inset:0;z-index:1}
+    .bar{display:none}
+    main.scroller{position:fixed;z-index:5;top:12px;right:12px;bottom:12px;width:min(460px,60vw);
+      overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+      background:rgba(247,246,243,.78);backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2);
+      border:1px solid rgba(255,255,255,.35);border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.35);
+      transition:transform .25s ease,opacity .25s ease}
+    .content{padding:48px 14px 40px}
+    h1{font-size:22px}
+    .chain,section.part,.gaps{background:rgba(255,255,255,.75);padding:16px}
+    .ph h2{font-size:17px;flex-basis:200px}
+    body.collapsed main.scroller{transform:translateX(calc(100% + 24px));opacity:0;pointer-events:none}
+    button.toggle{display:block;position:fixed;z-index:6;top:20px;right:24px;
+      font:600 13px/1 -apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;color:#fff;background:rgba(194,65,12,.92);
+      border:0;border-radius:999px;padding:8px 14px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+  }
+  @media (max-width:560px){
+    main.scroller{width:72vw;right:8px;top:8px;bottom:8px}
+    button.toggle{top:14px;right:16px}
+  }
 </style>
 </head>
 <body>
@@ -88,6 +132,7 @@
   <div class="now">目前播放：<b id="nowPart">—</b></div>
   <nav class="toc" id="toc"></nav>
 </div>
+<button class="toggle" id="toggle" type="button">收合重點</button>
 <main class="scroller"><div class="content">
 
 <header class="hero">
@@ -478,6 +523,13 @@
     parts.forEach(function(sec){ if (t >= +sec.dataset.start) cur = sec; });
     markActive(cur);
   }, 1000);
+
+  // narrow screens: collapse / expand the floating content panel
+  var tg = document.getElementById("toggle");
+  tg.addEventListener("click", function(){
+    var c = document.body.classList.toggle("collapsed");
+    tg.textContent = c ? "展開重點" : "收合重點";
+  });
 
   // YouTube IFrame API
   window.onYouTubeIframeAPIReady = function(){
