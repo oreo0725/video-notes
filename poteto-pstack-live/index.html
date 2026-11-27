@@ -17,20 +17,23 @@
   html{scroll-behavior:smooth}
   body{margin:0;background:var(--bg);color:var(--ink);
     font:16px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
-  .wrap{display:grid;grid-template-columns:minmax(0,1fr) 460px;gap:32px;max-width:1320px;margin:0 auto;padding:32px 24px 80px}
-  main{min-width:0}
-  aside{position:sticky;top:16px;align-self:start;max-height:calc(100vh - 32px);display:flex;flex-direction:column;gap:12px}
-  .player{background:#000;border-radius:12px;overflow:hidden;aspect-ratio:16/9;box-shadow:0 6px 24px rgba(0,0,0,.15)}
-  .player > div,.player iframe{width:100%;height:100%;display:block}
-  .now{font-size:13px;color:var(--muted);padding:0 4px}
+  html,body{height:100%}
+  body{overflow:hidden;display:grid;grid-template-rows:min(50vh, 56.25vw) auto minmax(0,1fr)}
+  .stage{background:#000;width:100%;height:100%;min-height:0}
+  .stage > div,.stage iframe{width:100%;height:100%;display:block;border:0}
+  .bar{background:var(--card);border-bottom:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.06);
+    display:flex;align-items:center;gap:14px;padding:8px 16px;min-width:0;z-index:2}
+  .now{font-size:13px;color:var(--muted);white-space:nowrap;flex:0 0 auto;max-width:38%;overflow:hidden;text-overflow:ellipsis}
   .now b{color:var(--ink)}
-  nav.toc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px;overflow:auto}
-  nav.toc a{display:flex;gap:10px;align-items:baseline;padding:6px 10px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:14px;line-height:1.5}
-  nav.toc a:hover{background:var(--bg)}
-  nav.toc a.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
-  nav.toc .t{font-variant-numeric:tabular-nums;color:var(--muted);min-width:44px;font-size:12px}
+  nav.toc{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;flex:1 1 auto;min-width:0;padding:2px 0}
+  nav.toc a{flex:0 0 auto;display:flex;gap:6px;align-items:baseline;padding:4px 10px;border:1px solid var(--line);border-radius:999px;
+    color:var(--ink);text-decoration:none;font-size:13px;line-height:1.5;background:var(--bg);white-space:nowrap}
+  nav.toc a:hover{border-color:var(--accent)}
+  nav.toc a.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);font-weight:600}
+  nav.toc .t{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px}
   nav.toc a.active .t{color:var(--accent)}
-
+  main.scroller{overflow-y:auto;min-height:0;scroll-behavior:smooth}
+  .content{max-width:920px;margin:0 auto;padding:24px 24px 80px}
   header.hero{margin-bottom:28px}
   .kicker{font-size:13px;letter-spacing:.08em;color:var(--accent);font-weight:700;text-transform:uppercase}
   h1{font-size:28px;line-height:1.35;margin:6px 0 10px}
@@ -45,7 +48,7 @@
   .flow li:not(:last-child)::after{content:"";position:absolute;left:10.5px;top:33px;bottom:-9px;width:1px;background:var(--line)}
   .note{font-size:13.5px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:12px}
 
-  section.part{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:18px 0;scroll-margin-top:16px}
+  section.part{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:18px 0;scroll-margin-top:12px}
   section.part.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
   .ph{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .ph .no{font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:999px}
@@ -72,17 +75,20 @@
   .gaps{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin:18px 0}
   .gaps h2{font-size:18px;margin:0 0 8px}
 
-  @media (max-width:1100px){
-    .wrap{grid-template-columns:1fr;padding:0 14px 60px}
-    aside{position:sticky;top:0;z-index:10;max-height:none;background:var(--bg);padding:10px 0 8px;margin:0 -14px;padding-left:14px;padding-right:14px}
-    nav.toc{display:none}
-    header.hero{margin-top:18px}
+  @media (max-width:700px){
+    .content{padding:16px 14px 60px}
+    .now{display:none}
+    h1{font-size:22px}
   }
 </style>
 </head>
 <body>
-<div class="wrap">
-<main>
+<div class="stage"><div id="yt"></div></div>
+<div class="bar">
+  <div class="now">目前播放：<b id="nowPart">—</b></div>
+  <nav class="toc" id="toc"></nav>
+</div>
+<main class="scroller"><div class="content">
 
 <header class="hero">
   <div class="kicker">直播重點整理 · YouTube Live</div>
@@ -104,7 +110,7 @@
     <li data-n="6"><b>Agent 自己 merge</b>：人改成事後抽樣 review，發現系統性問題就修環境 <a class="ts" data-t="3161"></a></li>
   </ol>
   <div class="note">貫穿全場的比喻是<b>米其林廚房</b>：從一個人包辦一切的家庭廚師，到負責經營廚房的主廚，再到開連鎖餐廳。<br>
-  點 <span style="color:var(--accent);font-weight:600">▶ 時間</span> 會讓右側影片跳到那個時間點播放；點旁邊的 ↗ 會在 YouTube 新分頁開啟同一個時間點。</div>
+  點 <span style="color:var(--accent);font-weight:600">▶ 時間</span> 會讓上方影片跳到那個時間點播放；點旁邊的 ↗ 會在 YouTube 新分頁開啟同一個時間點。</div>
 </div>
 
 <!-- Part 0 -->
@@ -410,14 +416,7 @@
     <li>如果內嵌播放器無法載入（例如直接用 file:// 開啟時，YouTube 可能拒絕內嵌），點時間戳會改成在新分頁開啟 YouTube 的同一個時間點。</li>
   </ul>
 </footer>
-</main>
-
-<aside>
-  <div class="player"><div id="yt"></div></div>
-  <div class="now">目前播放：<b id="nowPart">—</b></div>
-  <nav class="toc" id="toc"></nav>
-</aside>
-</div>
+</div></main>
 
 <script>
 (function(){
@@ -469,7 +468,7 @@
     if (sec === lastActive) return;
     if (lastActive){ lastActive.classList.remove("active"); lastActive._toc.classList.remove("active"); }
     if (sec){ sec.classList.add("active"); sec._toc.classList.add("active");
-      sec._toc.scrollIntoView({block:"nearest"});
+      var tc=document.getElementById("toc"); tc.scrollTo({left: sec._toc.offsetLeft - tc.clientWidth/2 + sec._toc.clientWidth/2, behavior:"smooth"});
       document.getElementById("nowPart").textContent = sec.querySelector(".no").textContent+"｜"+sec.querySelector("h2").textContent; }
     lastActive = sec;
   }
